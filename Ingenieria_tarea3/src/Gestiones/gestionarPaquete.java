@@ -1,14 +1,16 @@
+package Gestiones;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Clases;
 
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import ConexionBaseDatos.gestionarBaseDatos;
+import BaseDatos.gestionarBaseDatos;
+import ObjetosBase.Paquete;
 
 /**
  *
