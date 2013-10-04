@@ -18,6 +18,10 @@ import ObjetosBase.Paquete;
  */
 public class gestionarPaquete {
     
+    // Constructor
+    public gestionarPaquete() {
+        
+    }
     
     // Metodos
     
@@ -43,10 +47,10 @@ public class gestionarPaquete {
 
             if (!rs.next()) {
                 gestorBD.cerrarConexion(conexion);
+                stmt.close();
                 return false;
             }
-            
-            stmt.close();
+                      
         
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -64,10 +68,10 @@ public class gestionarPaquete {
 
             if (!rs.next()) {
                 gestorBD.cerrarConexion(conexion);
+                stmt.close();
                 return false;
             }
-            
-            stmt.close();            
+                       
         
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -117,11 +121,10 @@ public class gestionarPaquete {
 
             if (!rs.next()) {
                 gestorBD.cerrarConexion(conexion);
+                stmt.close();
                 return false;
             }
-            
-            stmt.close();
-        
+                    
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -138,10 +141,10 @@ public class gestionarPaquete {
 
             if (!rs.next()) {
                 gestorBD.cerrarConexion(conexion);
-                return false;
+                stmt.close(); 
+                return false;                
             }
-            
-            stmt.close();            
+                                  
         
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -189,10 +192,10 @@ public class gestionarPaquete {
 
             if (!rs.next()) {
                 gestorBD.cerrarConexion(conexion);
+                stmt.close();
                 return null;
             }
-            
-            stmt.close();            
+                                  
         
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -289,6 +292,7 @@ public class gestionarPaquete {
         
             Statement stmt = conexion.createStatement();
             int resultado = stmt.executeUpdate(insertPaquete);
+            stmt.close();
             gestorBD.cerrarConexion(conexion);
             return resultado > 0;
             
@@ -317,6 +321,7 @@ public class gestionarPaquete {
             Statement stmt = conexion.createStatement();
             int resultado = stmt.executeUpdate(borrarPaquete);
             gestorBD.cerrarConexion(conexion);
+            stmt.close();
             return resultado > 0;
             
 

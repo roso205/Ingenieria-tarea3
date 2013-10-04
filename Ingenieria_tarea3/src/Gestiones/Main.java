@@ -5,6 +5,10 @@
 package Gestiones;
 
 import ObjetosBase.Paquete;
+import javax.swing.JOptionPane;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -43,7 +47,30 @@ public class Main {
         Paquete pq = new Paquete(1111,42,"PAQUETONGO","POSTPAGO");
         gestion.agregarPaquete(pq);
         gestion.borrarPaquete(1111);
+        
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+        int codigoPlan = 10;
+        int codigoProducto = 20;
+        String fecha_a = (dateFormat.format(date)).toString();
+                String afiliacion = "UPDATE PRODUCTO SET CODIGO_P = "+
+                            Integer.toString(codigoPlan) + ", FECHA_A = '"+
+                            fecha_a + "' WHERE CODIGO = " +
+                            Integer.toString(codigoProducto) +";";
+                System.out.println(afiliacion);
+                
+         //77854 25649 ---> 27564
+         Afiliaciones af = new Afiliaciones();
+         af.modificarPlan(77854, 27564);
+         // 12301 2781
+         System.out.println(af.afiliarPaquete(57895, 2781, "UNICO"));
+         System.out.println(af.afiliarPaquete(57895, 1354, "UNICO"));
+         System.out.println(af.desafiliarPaquete(57895, 2781));
+         
+         
     }
+
         
 }
 
