@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package gestionarProducto;
+package Gestiones;
 
 import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import ConexionBaseDatos.gestionarBaseDatos;
+import BaseDatos.gestionarBaseDatos;
 
 
 
