@@ -2,25 +2,27 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package ObjetosBase;
+package servicio;
 
 /**
  *
  * @author yue
  */
-public class TipoServicio {
+public class servicio {
     
     private int Codigo;
     private String Nombre;
-
+    private int Costo;
+    private int CodigoTipo;
    
     //Constructor
-    TipoServicio(int Codigo, String Nombre){
+    servicio(int Codigo, String Nombre, int Costo, int CodigoTipo){
         
         this.Codigo = Codigo;
         this.Nombre = Nombre;
-
+        this.Costo = Costo;
+        this.CodigoTipo = CodigoTipo;
+        
     }
           
       // Metodos
@@ -48,6 +50,30 @@ public class TipoServicio {
         return this.Nombre;
               
     }  
+    
+    public void setCosto(int Costo) {
+        
+        this.Costo = Costo;
+                   
+    }
+
+    public int getCosto() {
+       
+        return this.Costo;
+              
+    } 
+
+     public void setCodigo_TS(int CodigoTipo) {
+        
+        this.CodigoTipo = CodigoTipo;
+                   
+    }
+
+    public int getCodigo_TS() {
+       
+        return this.CodigoTipo;
+              
+    }    
     
      
 }
