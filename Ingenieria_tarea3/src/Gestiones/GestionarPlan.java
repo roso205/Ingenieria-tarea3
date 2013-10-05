@@ -53,7 +53,7 @@ public class GestionarPlan {
         
     }
     
-   
+    //Utilizar con cuidado, porque queda aun el producto afiliado
     public boolean desafiliarClientesAfiliados(int cop){
     
         try{
@@ -140,14 +140,6 @@ public class GestionarPlan {
             System.out.println(e.getMessage());
         }
         
-        return true;
-    }
-    
-    public boolean borrarProducto(){
-        return true;
-    }    
-    
-    public boolean buscarProducto(){
         return true;
     }
     
