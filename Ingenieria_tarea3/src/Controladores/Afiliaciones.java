@@ -295,17 +295,42 @@ public class Afiliaciones {
         return false;
     }
     
-    public ArrayList<String> listarPaquetesAfiliados(int codigoProducto) {
+    public List<String> listarPaquetesAfiliados(int codigoProducto) {
         
-        ControladorConsumidores contr = new ControladorConsumidores();
-        Producto prod = contr.buscarProducto(codigoProducto);
-        
-        int rifC = prod.getRifCliente();
-        
-        String consulta = "SELECT "
-        
-        ArrayList <String> lista = new ArrayList();
-        return lista;
+
+        try{
+
+            gestionarBaseDatos BaseDatos = new gestionarBaseDatos();
+
+            Connection connection = BaseDatos.establecerConexion();
+
+            Statement stmt = connection.createStatement();
+            String consulta = "SELECT CODIGO_PQ FROM CONTRATA "
+                              + " WHERE (CONTRATA.CODIGO_PR = "
+                              +Integer.toString(codigoProducto)+") ";
+
+
+            ResultSet rs = stmt.executeQuery(consulta);
+
+            List<String> resultado = new ArrayList<String>();
+
+
+            while (rs.next()){
+                resultado.add(rs.getString(1));
+            }
+
+
+            stmt.close();
+            BaseDatos.cerrarConexion(connection); 
+            return resultado;
+        }
+
+        catch ( Exception e ) {
+            System.out.println(e.getMessage());   
+            List<String> resultado = new ArrayList<String>();
+            return resultado;
+        } 
+    
     }
     
 }
