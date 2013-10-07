@@ -58,7 +58,6 @@ public class ControladorFacturas {
         ArrayList<String> ServiciosPlanTotal = new ArrayList<String>();
         ControladorServiciosOfrecidos Consulta4 = 
                                             new ControladorServiciosOfrecidos();
-        System.out.println(Paquetes);
 
         for (int i = 0; i < Paquetes.size(); i++) {
 
@@ -129,7 +128,7 @@ public class ControladorFacturas {
          System.out.println();
          System.out.println("Consumos del Producto: ");     
 
-         //Boleano para verificar si existieron cosumos en el periodo
+         //Booleano para verificar si existieron consumos en el periodo
          boolean ver = false;
           
          if( !Consumos.isEmpty() ) { 

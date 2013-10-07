@@ -4,11 +4,7 @@
  */
 package Controladores;
 
-import Controladores.ControladorConsumidores;
-import Controladores.ControladorConsumos;
-import Controladores.ControladorFacturas;
-import Controladores.Afiliaciones;
-import Controladores.ControladorServiciosOfrecidos;
+import Controladores.*;
 import javax.swing.JOptionPane;
 import java.util.*;
 import java.text.*;
