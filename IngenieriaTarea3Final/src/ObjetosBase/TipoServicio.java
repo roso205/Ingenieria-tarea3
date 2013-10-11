@@ -16,7 +16,7 @@ public class TipoServicio {
 
    
     //Constructor
-    TipoServicio(int Codigo, String Nombre){
+    public TipoServicio(int Codigo, String Nombre){
         
         this.Codigo = Codigo;
         this.Nombre = Nombre;

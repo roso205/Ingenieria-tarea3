@@ -202,9 +202,9 @@ public class ControladorConsumidores {
         
   
         String producto = "INSERT INTO PRODUCTO VALUES ("
-                               +Integer.toString(Codigo)+","+Nombre+","
-                               +Descripcion+","+Integer.toString(CodigoPlan)+","
-                           +Integer.toString(RifCliente)+","+FechaAfiliacion+","
+                               +Integer.toString(Codigo)+", '"+Nombre+"' ,'"
+                               +Descripcion+"', "+Integer.toString(CodigoPlan)+","
+                           +Integer.toString(RifCliente)+", '"+FechaAfiliacion+"', "
                                +Integer.toString(Saldo)+")";
 
         // Se agrega el producto

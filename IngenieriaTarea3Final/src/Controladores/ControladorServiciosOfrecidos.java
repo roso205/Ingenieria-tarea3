@@ -6,8 +6,7 @@ package Controladores;
 
 import BaseDatos.Conexion;
 import BaseDatos.gestionarBaseDatos;
-import ObjetosBase.Paquete;
-import ObjetosBase.Plan;
+import ObjetosBase.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -24,6 +23,7 @@ public class ControladorServiciosOfrecidos {
         
     }
     
+    // Agrega un plan a la base de datos, y su referencia en prepago o postpago
     public boolean agregarPlan(Plan p) {
         
         int codigoP = p.getCodigo();
@@ -39,11 +39,15 @@ public class ControladorServiciosOfrecidos {
                                 Integer.toString(codigoP)+ ", '"+
                                 nombreP + "', " +
                                 Double.toString(tarifaP)+ ");";
+        
+        String insertRef = "INSERT INTO "+ tipoP + "VALUES (" + codigoP + ");";
+                            
                
         try {
         
             Statement stmt = conexion.createStatement();
             int resultado = stmt.executeUpdate(insertPlan);
+            resultado = resultado * stmt.executeUpdate(insertRef);
             stmt.close();
             gestorBD.cerrarConexion(conexion);
             return resultado > 0;
@@ -56,6 +60,75 @@ public class ControladorServiciosOfrecidos {
         
         gestorBD.cerrarConexion(conexion);
         return false;
+        
+    }
+    
+    // Agrega un tipo de servicio a la base de datos
+    public boolean agregarTipoServicio(TipoServicio tp) {
+        int codigo = tp.getCodigo();
+        String nombre = tp.getNombre();
+        
+        gestionarBaseDatos gestorBD = new gestionarBaseDatos();
+        
+        Connection conexion = gestorBD.establecerConexion();
+        
+        String insertTs = "INSERT INTO TIPO_SERVICIO VALUES ('" +
+                                nombre + "', " +
+                                Integer.toString(codigo)+ "); ";
+        
+        try {
+        
+            Statement stmt = conexion.createStatement();
+            int resultado = stmt.executeUpdate(insertTs);
+            stmt.close();
+            gestorBD.cerrarConexion(conexion);
+            return resultado > 0;
+            
+
+        
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        gestorBD.cerrarConexion(conexion);
+        return false;    
+        
+    }
+    
+    // Agrega un servicio a la base de datos
+    public boolean agregarServicio(Servicio s) {
+        
+        int codigo = s.getCodigo();
+        String nombre = s.getNombre();
+        int costo = s.getCosto();
+        int codigoTipo = s.getCodigo_TS();
+        
+        gestionarBaseDatos gestorBD = new gestionarBaseDatos();
+        
+        Connection conexion = gestorBD.establecerConexion();
+        
+        String insertS = "INSERT INTO SERVICIO VALUES (" +
+                                Integer.toString(codigo) + ", '"+
+                                nombre + "', " +
+                                Integer.toString(costo) + ", "+
+                                Integer.toString(codigoTipo) + ");";
+        
+        try {
+        
+            Statement stmt = conexion.createStatement();
+            int resultado = stmt.executeUpdate(insertS);
+            stmt.close();
+            gestorBD.cerrarConexion(conexion);
+            return resultado > 0;
+            
+
+        
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        gestorBD.cerrarConexion(conexion);
+        return false;  
         
     }
     
@@ -103,7 +176,7 @@ public class ControladorServiciosOfrecidos {
         
         Statement stm = cn.createStatement(); 
         
-         stm.executeQuery("DELETE * FROM AFILIA WHERE CODIGO_P ="+cop);
+         stm.executeQuery("DELETE FROM AFILIA WHERE CODIGO_P ="+cop);
        
       
      cn.close();
@@ -114,7 +187,7 @@ public class ControladorServiciosOfrecidos {
         return true;
     }
     
-    public boolean agregarPaquete(int co_plan,int co_paq){
+    public boolean agregarPaqueteAPlan(int co_plan,int co_paq){
         
                 try{
             
@@ -131,7 +204,7 @@ public class ControladorServiciosOfrecidos {
                   + "VALUES ("+co_plan+","+co_paq+")" );
        
        }else{
-           System.out.println("Ya el paquete:"+co_paq+" esta asociado al plan: "+co_plan);
+           System.out.println("Ya el paquete:" +co_paq+" esta asociado al plan: "+co_plan);
            return false;
        }
       
@@ -144,6 +217,7 @@ public class ControladorServiciosOfrecidos {
         return true;
     }
     
+    // Borra el paquete y sus afiliados.
     public boolean borrarPaquete(int co_plan,int co_paq){
         
          try{
@@ -164,15 +238,17 @@ public class ControladorServiciosOfrecidos {
         return true;
     }
     
+    // Modifica el Plan del producto
     public boolean modificarProducto(int co_pro, int new_plan){
         try{
             
         Connection cn = new Conexion().getConexion();
         
         Statement stm = cn.createStatement(); 
-        
-        stm.executeQuery("UPDATE PRODUCTO SET CODIGO_P="+new_plan+" WHERE"
-                + " CODIGO="+co_pro);
+        System.out.println("UPDATE PRODUCTO SET CODIGO_P = " +new_plan+" WHERE"
+                + " CODIGO = " +co_pro +";");
+        stm.executeQuery("UPDATE PRODUCTO SET CODIGO_P = " +new_plan+" WHERE"
+                + " CODIGO = " +co_pro +";");
       
       
          cn.close();
@@ -193,8 +269,10 @@ public class ControladorServiciosOfrecidos {
         Statement stm = cn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
    ResultSet.CONCUR_READ_ONLY); 
         
-        ResultSet rs = stm.executeQuery("SELECT * FROM PRODUCTO WHERE"
-                + "CODIGO_P="+cop);
+        System.out.println("SELECT * FROM PRODUCTO WHERE "
+                + "CODIGO_P = "+Integer.toString(cop)+";");
+        ResultSet rs = stm.executeQuery("SELECT * FROM PRODUCTO WHERE "
+                + "CODIGO_P = "+Integer.toString(cop)+";");
        
         rs.last();
         
@@ -221,7 +299,7 @@ public class ControladorServiciosOfrecidos {
     }
     
     // Agrega un servicio al paquete.
-    public boolean agregarServicio(int codigoServ, int codigoPaquete,
+    public boolean agregarServicioAPaquete(int codigoServ, int codigoPaquete,
                                    int cantidad) {
         
         // Crear el gestor para la base de datos
@@ -481,7 +559,6 @@ public class ControladorServiciosOfrecidos {
                                 tipoPQ + "', " + 
                                 Integer.toString(tarifaPQ)+ ", '"+
                                 nombrePQ + "');";
-        System.out.println(insertPaquete);
         
         try {
         
