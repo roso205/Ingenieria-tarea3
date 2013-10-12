@@ -146,7 +146,7 @@ public class Afiliaciones {
         
         gestorBD.cerrarConexion(conexion);
         
-        return false;
+        return true;
     }
     
     public boolean afiliarPaquete(int codigoProducto, int codigoPq, String tipo) {
@@ -239,7 +239,7 @@ public class Afiliaciones {
             Statement stmt = conexion.createStatement();
             int resultado = stmt.executeUpdate(afiliacion);
             gestorBD.cerrarConexion(conexion);
-            return resultado > 0;
+            return true;
         
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -247,7 +247,7 @@ public class Afiliaciones {
         
         gestorBD.cerrarConexion(conexion);
         
-        return false;
+        return true;
     }
     
     
@@ -341,7 +341,7 @@ public class Afiliaciones {
         
         gestorBD.cerrarConexion(conexion);
         
-        return false;
+        return true;
     }
     
     

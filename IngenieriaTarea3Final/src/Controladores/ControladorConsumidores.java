@@ -221,17 +221,17 @@ public class ControladorConsumidores {
         
         gestorBD.cerrarConexion(conexion);
         
-        return false;
+        return true;
         
 
     }
     
-    public void mostrarProducto(int codigoPaquete) {
+    public void mostrarProducto(int codigoProducto) {
         
 
         //Creamos las listas para guardar las consultas
 
-        Producto prod = buscarProducto(codigoPaquete);
+        Producto prod = buscarProducto(codigoProducto);
         
         System.out.println(prod.getCodigo());
         System.out.println(prod.getCodigoPlan());
