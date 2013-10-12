@@ -33,7 +33,7 @@ public class ControladorServiciosOfrecidosTest {
     public static final int Saldo = 1337;
     public static final String tipoPlan = "PREPAGO";
     public static final double tarifaPlan = 200;
-    public static final String nombrePlan = "PlanPrueba";
+    public static final String nombrePlan = "PlanGuardadoPrueba";
     public static final int codigoPaquete = 8888;
     public static final int codigoPaqueteMod = 9999;
     public static final int tarifaPaquete = 2222;
@@ -44,6 +44,7 @@ public class ControladorServiciosOfrecidosTest {
     public static final String nombreServ = "ServicioPrueba";
     public static final int costoServ = 3000;
     public static final int codigoTipoServ = 55;
+    public static final int codigoTipoServGuardado = 110;
     public static final String nombreTipoServ = "TipoServicioPrueba";
     public static final int cantidadServicio = 111;
     public static final int codigoPlanMod = 1112;
@@ -52,16 +53,17 @@ public class ControladorServiciosOfrecidosTest {
     public static final String nombrePlanMod = "PlanModificar";
     
     // Variables para instanciar en la prueba
-    public static Cliente ClienteP;
-    public static Plan PlanP;
-    public static Producto ProductoP;
+    public static Cliente ClienteGuardado;
+    public static Plan PlanGuardado;
+    public static Producto ProductoGuardado;
     public static ControladorConsumidores cc;
     public static ControladorServiciosOfrecidos cso;
-    public static Paquete PaqueteP;
+    public static Paquete PaqueteGuardado;
     public static Paquete PaqueteMod;
     public static TipoServicio TipoServicioMod;
+    public static TipoServicio TipoServicioGuardado;
     public static Servicio ServicioMod;
-    public static Servicio ServicioP;
+    public static Servicio ServicioGuardado;
     public static Plan PlanMod;
     
     public ControladorServiciosOfrecidosTest() {
@@ -76,26 +78,28 @@ public class ControladorServiciosOfrecidosTest {
         para su uso, las terminadas en "Mod" se usan para probar metodos de 
         agregar */
         
-        ClienteP = new Cliente(nombreCliente,rifCliente,dirCliente);
-        PlanP = new Plan(codigoPlan,nombrePlan,tipoPlan,tarifaPlan);
+        ClienteGuardado = new Cliente(nombreCliente,rifCliente,dirCliente);
+        PlanGuardado = new Plan(codigoPlan,nombrePlan,tipoPlan,tarifaPlan);
         PlanMod = new Plan(codigoPlanMod,nombrePlanMod,tipoPlanMod,tarifaPlanMod);
-        ProductoP = new Producto(codigoProd,nombreProd,descripcionProd,
+        ProductoGuardado = new Producto(codigoProd,nombreProd,descripcionProd,
                                  codigoPlan,rifCliente,FechaAfiliacion,Saldo);
-        PaqueteP = new Paquete(codigoPaquete,tarifaPaquete,nombrePaquete,tipoPaquete);
+        PaqueteGuardado = new Paquete(codigoPaquete,tarifaPaquete,nombrePaquete,tipoPaquete);
         PaqueteMod = new Paquete(codigoPaqueteMod,tarifaPaquete,nombrePaquete,tipoPaquete);
         TipoServicioMod = new TipoServicio(codigoTipoServ,nombreTipoServ);
+        TipoServicioGuardado = new TipoServicio(codigoTipoServGuardado,nombreTipoServ);
         ServicioMod = new Servicio(codigoServ,nombreServ,costoServ,codigoTipoServ);
-        ServicioP = new Servicio(codigoServP,nombreServ,costoServ,codigoTipoServ);
+        ServicioGuardado = new Servicio(codigoServP,nombreServ,costoServ,codigoTipoServGuardado);
         
         
         cc = new ControladorConsumidores();
-        cc.agregarCliente(ClienteP);
+        cso = new ControladorServiciosOfrecidos();
+        cc.agregarCliente(ClienteGuardado);
+        cso.agregarPlan(PlanGuardado);
         cc.agregarProducto(codigoProd, nombreProd, descripcionProd, codigoPlan, 
                            rifCliente, FechaAfiliacion, Saldo);
-        cso = new ControladorServiciosOfrecidos();
-        cso.agregarPaquete(PaqueteP);
-        cso.agregarPlan(PlanP);
-        cso.agregarServicio(ServicioP);
+        cso.agregarTipoServicio(TipoServicioGuardado);
+        cso.agregarPaquete(PaqueteGuardado);
+        cso.agregarServicio(ServicioGuardado);
         
         
     }
@@ -104,6 +108,21 @@ public class ControladorServiciosOfrecidosTest {
     public static void tearDownClass() {
         
         cc = new ControladorConsumidores();
+        cso = new ControladorServiciosOfrecidos();
+        
+        cso.borrarPaquete(PaqueteGuardado.getCodigo());
+        cso.eliminarPlan(PlanGuardado);
+        cso.eliminarServicio(ServicioGuardado);
+        cso.borrarPaquete(codigoPaqueteMod);
+        cso.eliminarPlan(PlanMod);
+        cso.eliminarServicio(ServicioMod);
+        cso.eliminarTipoServicio(TipoServicioMod);
+        cso.eliminarServicioDePaquete(codigoServP, codigoPaquete);
+        cso.eliminarTipoServicio(TipoServicioGuardado);
+        
+        
+        
+        
         
     }
     
@@ -155,7 +174,7 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testMostrarClientesAfiliados() {
         System.out.println("mostrarClientesAfiliados");
-        int cop = PlanP.getCodigo();
+        int cop = PlanGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         instance.mostrarClientesAfiliados(cop);
         boolean res = true;
@@ -168,7 +187,7 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testDesafiliarClientesAfiliados() {
         System.out.println("desafiliarClientesAfiliados");
-        int cop = PlanP.getCodigo();
+        int cop = PlanGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         boolean expResult = true;
         boolean result = instance.desafiliarClientesAfiliados(cop);
@@ -181,8 +200,8 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testAgregarPaqueteAPlan_int_int() {
         System.out.println("agregarPaqueteAPlan");
-        int co_plan = PlanP.getCodigo();
-        int co_paq = PaqueteP.getCodigo();
+        int co_plan = PlanGuardado.getCodigo();
+        int co_paq = PaqueteGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         boolean expResult = true;
         boolean result = instance.agregarPaqueteAPlan(co_plan, co_paq);
@@ -190,19 +209,19 @@ public class ControladorServiciosOfrecidosTest {
     }
 
     /**
-     * Test of borrarPaquete method, of class ControladorServiciosOfrecidos.
+     * Test of borrarPaqueteDePlan method, of class ControladorServiciosOfrecidos.
      */
-    /**
+  
     @Test
-    public void testBorrarPaquete_int_int() {
-        System.out.println("borrarPaquete");
-        int co_plan = PlanP.getCodigo();
-        int co_paq = PaqueteP.getCodigo();
+    public void testBorrarPaqueteDePlan_int_int() {
+        System.out.println("borrarPaqueteDePlan");
+        int co_plan = PlanGuardado.getCodigo();
+        int co_paq = PaqueteGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         boolean expResult = true;
-        boolean result = instance.borrarPaquete(co_plan, co_paq);
+        boolean result = instance.borrarPaqueteDePlan(co_plan, co_paq);
         assertEquals(expResult, result);
-    }*/
+    }
 
     /**
      * Test of modificarProducto method, of class ControladorServiciosOfrecidos.
@@ -210,7 +229,7 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testModificarProducto() {
         System.out.println("modificarProducto");
-        int co_pro = ProductoP.getCodigo();
+        int co_pro = ProductoGuardado.getCodigo();
         int new_plan = PlanMod.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         boolean expResult = true;
@@ -224,7 +243,7 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testMostrarProductos() {
         System.out.println("mostrarProductos");
-        int cop = PlanP.getCodigo();
+        int cop = PlanGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         instance.mostrarProductos(cop);
         assertEquals(true,true);
@@ -236,8 +255,8 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testAgregarServicioAPaquete() {
         System.out.println("agregarServicioAPaquete");
-        int codigoServ = ServicioP.getCodigo();
-        int codigoPaquete = PaqueteP.getCodigo();
+        int codigoServ = ServicioGuardado.getCodigo();
+        int codigoPaquete = PaqueteGuardado.getCodigo();
         int cantidad = cantidadServicio;
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         boolean expResult = true;
@@ -246,13 +265,13 @@ public class ControladorServiciosOfrecidosTest {
     }
 
     /**
-     * Test of eliminarServicio method, of class ControladorServiciosOfrecidos.
+     * Test of eliminarServicioDePaquete method, of class ControladorServiciosOfrecidos.
      */
     
     /*
     @Test
-    public void testEliminarServicio() {
-        System.out.println("eliminarServicio");
+    public void testEliminarServicioDePaquete() {
+        System.out.println("eliminarServicioDePaquete");
         int codigoServ = 0;
         int codigoPaquete = 0;
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
@@ -270,11 +289,11 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testObtenerServicios() {
         System.out.println("obtenerServicios");
-        int codigoPaquete = PaqueteP.getCodigo();
+        int codigoPaquete = PaqueteGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
-        ArrayList<String> expResult = new ArrayList();
-        expResult.add(Integer.toString(66));
-        ArrayList result = instance.obtenerServicios(codigoPaquete);
+        int expResult = codigoServP;
+        ArrayList<String> serv = instance.obtenerServicios(codigoPaquete);
+        int result = Integer.parseInt(serv.get(0));
         assertEquals(expResult, result);
     }
 
@@ -284,10 +303,19 @@ public class ControladorServiciosOfrecidosTest {
     @Test
     public void testBuscarPaquete() {
         System.out.println("buscarPaquete");
-        int codigoPaquete = PaqueteP.getCodigo();
+        int codigoPaquete = PaqueteGuardado.getCodigo();
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
-        Paquete expResult = PaqueteP;
-        Paquete result = instance.buscarPaquete(codigoPaquete);
+        Paquete pq = instance.buscarPaquete(codigoPaquete);
+        
+        String expResult = Integer.toString(PaqueteGuardado.getCodigo());
+        expResult += PaqueteGuardado.getTipo();
+        expResult += Integer.toString(PaqueteGuardado.getTarifa());
+        expResult += PaqueteGuardado.getNombre();
+        
+        String result = Integer.toString(pq.getCodigo());
+        result += pq.getTipo();
+        result += Integer.toString(pq.getTarifa());
+        result += pq.getNombre();
         assertEquals(expResult, result);
     }
 
@@ -326,7 +354,7 @@ public class ControladorServiciosOfrecidosTest {
     public void testTarifaTotalPaquetesAdicionales() {
         System.out.println("TarifaTotalPaquetesAdicionales");
         List<String> Paquetes = new ArrayList();
-        Paquetes.add(Integer.toString(PaqueteP.getCodigo()));
+        Paquetes.add(Integer.toString(PaqueteGuardado.getCodigo()));
         ControladorServiciosOfrecidos instance = new ControladorServiciosOfrecidos();
         int expResult = 2222;
         int result = instance.TarifaTotalPaquetesAdicionales(Paquetes);

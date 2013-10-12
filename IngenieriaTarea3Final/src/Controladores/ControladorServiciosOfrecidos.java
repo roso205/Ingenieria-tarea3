@@ -30,17 +30,16 @@ public class ControladorServiciosOfrecidos {
         double tarifaP = p.getTarifa();
         String nombreP = p.getNombre();
         String tipoP = p.getTipo();
-        
         gestionarBaseDatos gestorBD = new gestionarBaseDatos();
-        
+        int tarifa = (int) tarifaP;
         Connection conexion = gestorBD.establecerConexion();
         
         String insertPlan = "INSERT INTO PLAN VALUES (" +
                                 Integer.toString(codigoP)+ ", '"+
                                 nombreP + "', " +
-                                Double.toString(tarifaP)+ ");";
+                                Integer.toString(tarifa)+ ");";
         
-        String insertRef = "INSERT INTO "+ tipoP + "VALUES (" + codigoP + ");";
+        String insertRef = "INSERT INTO "+ tipoP + " VALUES (" + codigoP + ");";
                             
                
         try {
@@ -132,6 +131,126 @@ public class ControladorServiciosOfrecidos {
         
     }
     
+    // Elimina el plan y sus interrelaciones de la base de datos
+    // NOTA IMPORTANTE : No se debe usar a la ligera ya que borra un producto
+    // sin borrar sus interrelaciones.
+    public boolean eliminarPlan(Plan p) {
+        
+        String cod = Integer.toString(p.getCodigo());
+        
+        gestionarBaseDatos gestorBD = new gestionarBaseDatos();
+        
+        Connection conexion = gestorBD.establecerConexion();
+        
+        String borrarAfilia = "DELETE FROM AFILIA WHERE CODIGO_P = "+cod+";";
+        String borrarContiene = "DELETE FROM CONTIENE WHERE CODIGO_P = "+cod+";";
+        String borrarPostpago = "DELETE FROM POSTPAGO WHERE CODIGO_P = "+cod+";";
+        String borrarPrepago = "DELETE FROM PREPAGO WHERE CODIGO_P = "+cod+";";
+        String borrarProducto = "DELETE FROM PRODUCTO WHERE CODIGO_P = "+cod+";";
+        String borrarPlan = "DELETE FROM PLAN WHERE CODIGO = "+cod+";";
+        
+        try {
+        
+            Statement stmt = conexion.createStatement();
+            stmt.executeUpdate(borrarAfilia);
+            stmt.executeUpdate(borrarContiene);
+            stmt.executeUpdate(borrarPostpago);
+            stmt.executeUpdate(borrarPrepago);
+            stmt.executeUpdate(borrarProducto);
+            int resultado = stmt.executeUpdate(borrarPlan);
+            stmt.close();
+            gestorBD.cerrarConexion(conexion);
+            return resultado > 0;
+            
+
+        
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        gestorBD.cerrarConexion(conexion);
+        return false;  
+    }
+    
+    // Elimina el servicio y sus interrelaciones de la base de datos
+    public boolean eliminarServicio(Servicio s) {
+        
+        String cod = Integer.toString(s.getCodigo());
+        
+        gestionarBaseDatos gestorBD = new gestionarBaseDatos();
+        
+        Connection conexion = gestorBD.establecerConexion();
+        
+        String borrarServicio = "DELETE FROM SERVICIO WHERE CODIGO = "+cod+";";
+        String borrarConforma = "DELETE FROM CONFORMA WHERE CODIGO_S = "+cod+";";
+        String borrarConsumo = "DELETE FROM CONSUMO WHERE CODIGO_S = "+cod+";";
+        
+        try {
+        
+            Statement stmt = conexion.createStatement();
+            stmt.executeUpdate(borrarConforma);
+            stmt.executeUpdate(borrarConsumo);
+            int resultado = stmt.executeUpdate(borrarServicio);
+            stmt.close();
+            gestorBD.cerrarConexion(conexion);
+            return resultado > 0;
+            
+
+        
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        gestorBD.cerrarConexion(conexion);
+        return false;  
+        
+    }
+    
+    // Elimina el tipo de servicio y sus interrelaciones de la base de datos
+    public boolean eliminarTipoServicio(TipoServicio tp) {
+        
+        String cod = Integer.toString(tp.getCodigo());
+        
+        gestionarBaseDatos gestorBD = new gestionarBaseDatos();
+        
+        Connection conexion = gestorBD.establecerConexion();
+        
+        Servicio serv; 
+        ControladorServiciosOfrecidos cso = new ControladorServiciosOfrecidos();
+        
+        String borrarTipoServicio = "DELETE FROM TIPO_SERVICIO WHERE CODIGO = "+cod+";";
+        String buscarServicios = "SELECT CODIGO FROM SERVICIO WHERE CODIGO_TS = "+cod+";";
+        
+        try {
+        
+            Statement stmt = conexion.createStatement();
+            
+            // Borrar los servicios asociados a el tipo de servicio
+            ResultSet rs = stmt.executeQuery(buscarServicios);
+            
+            while (rs.next()) {
+                serv = new Servicio(rs.getInt(1),null,0,0);
+                cso.eliminarServicio(serv);
+            }       
+            
+            stmt.executeUpdate(borrarTipoServicio);
+            int resultado = stmt.executeUpdate(borrarTipoServicio);
+            stmt.close();
+            gestorBD.cerrarConexion(conexion);
+            return resultado > 0;
+            
+
+        
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        gestorBD.cerrarConexion(conexion);
+        return false;  
+        
+    }
+    
+    // Muestra los clientes afiliados al plan
     public void mostrarClientesAfiliados (int cop){
         
         try{
@@ -217,17 +336,19 @@ public class ControladorServiciosOfrecidos {
         return true;
     }
     
-    // Borra el paquete y sus afiliados.
-    public boolean borrarPaquete(int co_plan,int co_paq){
+    // Borra la asociacion entre el plan y el paquete.
+    public boolean borrarPaqueteDePlan(int co_plan,int co_paq){
         
-         try{
+        try{
             
         Connection cn = new Conexion().getConexion();
         
         Statement stm = cn.createStatement(); 
         
-        stm.executeQuery("DELETE * FROM CONTIENE WHERE"
-                + " CODIGO_P ="+co_plan+" AND CODIGO_PQ="+co_paq);
+        String borrarContiene = "DELETE FROM CONTIENE WHERE"
+                + " CODIGO_P ="+co_plan+" AND CODIGO_PQ="+co_paq;
+        
+        stm.executeQuery(borrarContiene);
       
       
          cn.close();
@@ -374,7 +495,7 @@ public class ControladorServiciosOfrecidos {
         
     }
     
-    public boolean eliminarServicio(int codigoServ, int codigoPaquete) {
+    public boolean eliminarServicioDePaquete(int codigoServ, int codigoPaquete) {
         
         // Crear el gestor para la base de datos
         
@@ -584,13 +705,20 @@ public class ControladorServiciosOfrecidos {
         
         Connection conexion = gestorBD.establecerConexion();
         
+        String codPq = Integer.toString(codigoPaquete);
+        String borrarContrata = "DELETE FROM CONTRATA WHERE CODIGO_PQ = "+codPq+";";
+        String borrarContiene = "DELETE FROM CONTIENE WHERE CODIGO_PQ = "+codPq+";";
+        String borrarConforma = "DELETE FROM CONFORMA WHERE CODIGO_PQ = "+codPq+";";
         String borrarPaquete = "DELETE FROM PAQUETE WHERE "+
-                                "CODIGO = "+Integer.toString(codigoPaquete)+";";
+                                "CODIGO = "+codPq+";";
         System.out.println(borrarPaquete);
         
         try {
         
             Statement stmt = conexion.createStatement();
+            stmt.executeUpdate(borrarContrata);
+            stmt.executeUpdate(borrarContiene);
+            stmt.executeUpdate(borrarConforma);
             int resultado = stmt.executeUpdate(borrarPaquete);
             gestorBD.cerrarConexion(conexion);
             stmt.close();
